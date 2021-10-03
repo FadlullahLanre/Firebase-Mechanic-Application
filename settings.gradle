@@ -1,0 +1,2 @@
+rootProject.name = "Oga Mechanic Application"
+include ':app'
