@@ -7,10 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
@@ -72,6 +76,12 @@ public class ListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater =getMenuInflater();
         menuInflater.inflate(R.menu.list_activity_menu, menu);
+        MenuItem insertMenu = menu.findItem(R.id.insert_menu);
+        if(FirebaseUtil.isAdmin){
+            insertMenu.setVisible(true);
+        }else{
+            insertMenu.setVisible(false);
+        }
         return true;
     }
 
@@ -82,6 +92,18 @@ public class ListActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, MechanicActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.logout_menu:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d("logout", "User logged out");
+                                FirebaseUtil.attachListener();
+                            }
+                        });
+                FirebaseUtil.removeListener();
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -95,12 +117,16 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        FirebaseUtil.attachListener();
         FirebaseUtil.openFbReference("mechanics", this);
         RecyclerView recyclerView = findViewById(R.id.rvMechanics);
         final MechanicsAdapter mechanicsAdapter = new MechanicsAdapter();
         recyclerView.setAdapter(mechanicsAdapter);
         LinearLayoutManager mechanicLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mechanicLayoutManager);
+        FirebaseUtil.attachListener();
+
+    }
+    public void showMenu(){
+        invalidateOptionsMenu();
     }
 }

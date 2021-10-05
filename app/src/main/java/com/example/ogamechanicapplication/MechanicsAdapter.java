@@ -34,8 +34,6 @@ public class MechanicsAdapter extends RecyclerView.Adapter<MechanicsAdapter.Mech
         mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull  DataSnapshot snapshot, @Nullable String previousChildName) {
-
-
                 MechanicsList mechanicsList = snapshot.getValue(MechanicsList.class);
                 Log.d("Mechanics", mechanicsList.getCompanyName());
                 mechanicsList.setId(snapshot.getKey());

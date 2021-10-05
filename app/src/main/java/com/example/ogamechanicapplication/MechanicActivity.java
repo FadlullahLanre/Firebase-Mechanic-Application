@@ -1,3 +1,4 @@
+
 package com.example.ogamechanicapplication;
 
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -107,6 +108,23 @@ public class MechanicActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
+        if (FirebaseUtil.isAdmin){
+            menu.findItem(R.id.delete_menu).setVisible(true);
+            menu.findItem(R.id.save_menu).setVisible(true);
+            enableEditText(true);
+        }else{
+            menu.findItem(R.id.delete_menu).setVisible(false);
+            menu.findItem(R.id.save_menu).setVisible(false);
+            enableEditText(false);
+        }
         return true;
+    }
+
+    private void enableEditText(boolean isEnabled){
+        company_Name.setEnabled(isEnabled);
+        service_type.setEnabled(isEnabled);
+        C_location.setEnabled(isEnabled);
+        pricePhour.setEnabled(isEnabled);
+        pNumber.setEnabled(isEnabled);
     }
 }
